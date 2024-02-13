@@ -1,3 +1,4 @@
 [submodule "nerfstudio"]
 	path = nerfstudio
 	url = https://github.com/cmj5064/nerfstudio
+	branch = mj
