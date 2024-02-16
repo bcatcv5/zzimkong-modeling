@@ -1,10 +1,10 @@
 import os
 from typing import Final
 
-ROOT_PATH: Final = os.path.dirname(os.getcwd())
-TRAIN_PATH: Final = "live/train.py"
+TRAIN_SPACE_PATH: Final = "../nerfstudio/pipe.py"
+TRAIN_FURNITURE_PATH: Final = "pipe.py"
 
-REDIS_SERVER_IP: Final = "publisher ip"
-REDIS_SERVER_PORT: Final = 0
+REDIS_SERVER_IP: Final = "104.155.185.154"
+REDIS_SERVER_PORT: Final = 6379
 REDIS_SERVER_INDEX: Final = 0
-REDIS_SERVER_PASSWORD: Final = "publisher redis password"
+REDIS_SERVER_PASSWORD: Final = "WlazhdzzimkkongAI6!"
