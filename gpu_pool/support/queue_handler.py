@@ -9,28 +9,14 @@ class QueueHandler:
     def __init__(self) -> None:
         self.conn = QueueDataSource().getConnection()
 
-    def exists(self, str):
-        return self.conn.exists(str)
-
-    def get(self, str):
-        return self.conn.get(str)
-
-    def pop_message(self) -> dict:
-        # return self.conn.blpop("config", timeout=0)
-        # return self.conn.get("config")
-        confs = self.conn.keys("*")[-5:]
-        return confs
+    def pop_message_furniture(self) -> dict:
+        return self.conn.blpop("furniture", timeout=0)
     
-    def push_counter(self, config):
-        # self.conn.rpush("config", json.dumps(config))
-        self.conn.set("counter", json.dumps(config))
+    def pop_message_space(self) -> dict:
+        return self.conn.blpop("space", timeout=0)
 
-    def push_message(self, config, counter):
-        # self.conn.rpush("config", json.dumps(config))
-
-        if config["objectType"]:
-            n = counter["furniture"]
-            self.conn.set(f"furniture{n}", json.dumps(config))
-        else:
-            n = counter["space"]
-            self.conn.set(f"space{n}", json.dumps(config))
+    def push_message(self, config):
+        if config["objectType"]: # true
+            self.conn.rpush("furniture", json.dumps(config))
+        else:                    # false
+            self.conn.rpush("space", json.dumps(config))
