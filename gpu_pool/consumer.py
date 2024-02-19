@@ -80,7 +80,8 @@ def train_furniture_process() -> None:
         logger.info("학습 중 입니다.")
         # git_synchronize()
 
-        train_log = train(command)
+        # train_log = train(command)
+        train_log = handle_setup(command)
         
         if train_log.stderr:
             logger.info("학습 중 에러 발생 log를 확인하세요.")
