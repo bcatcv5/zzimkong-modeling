@@ -1,7 +1,7 @@
 import os
 from typing import Final
 
-TRAIN_SPACE_PATH: Final = "../nerfstudio/pipe.py"
+TRAIN_SPACE_PATH: Final = "nerfstudio/pipe.py"
 TRAIN_FURNITURE_PATH: Final = "pipe.py"
 
 REDIS_SERVER_IP: Final = "104.155.185.154"
