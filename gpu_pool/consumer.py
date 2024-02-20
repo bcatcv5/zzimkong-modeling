@@ -6,6 +6,8 @@ import env
 from logger import get_logger
 import git
 import sys
+import requests
+import json
 
 SLEEP_TIME: Final = 0.5
 CONFIG_INDEX: Final = 1
@@ -24,8 +26,20 @@ def handle_receive_process() -> None:
         select_process()
         sleep(SLEEP_TIME)
 
+def id(config):
+    url = "https://zzimkong.ggm.kr/inference/recived"
+    data = {"id": config["id"]}
+    r = requests.post(url, data=data, verify=False)
+    return r.status_code
 
-def select_process(): # TODO: 서버마다 담당한 프로세스만 수행 (이외는 주석 처리할 것)
+
+def status(status, message, id):
+    url = "https://zzimkong.ggm.kr/inference/status"
+    data = {"status": status, "statusMessage": message, "id": id}
+    r = requests.post(url, data=data, verify=False)
+
+
+def select_process(): # NOTE: 서버마다 담당한 프로세스만 수행 (이외는 주석 처리할 것)
     # TODO GPU 가용 공간 체크하고 train process 수행할지
 
     # for gcp server
@@ -34,16 +48,15 @@ def select_process(): # TODO: 서버마다 담당한 프로세스만 수행 (이
     # for 4090 server
     # train_furniture_process()
 
+    # else: # NOTE 이외의 경우 예외 처리 어떻게 할지 (aistage 사용 시 문제가 될 수 있음)
+
 
 def getErrorMessage(log):
-    return log.stderr.read().decode()
+    return log.stderr.read()
 
 
 def train_space_process() -> None:
     """큐에서 메세지를 추출하여 공간 모델 학습 수행"""
-    # TODO config 받았다는 메시지 수신 시 웹 서버로 전송 api1
-    # r = request.post => r.status_code 201일 때만 학습 진행
-    # TODO 201 이외의 경우 예외 처리 어떻게 할지 (aistage 사용 시 문제가 될 수 있음)
     config: bytes = handler.pop_message_space()
 
     if config is not None:
@@ -51,23 +64,24 @@ def train_space_process() -> None:
         logger.info("학습 중 입니다.")
         # git_synchronize()
 
-        # train_log = train(command)
-        train_log = handle_setup(command)
-        
-        if train_log.returncode != SUCCESS_CODE:
-            logger.error(getErrorMessage(train_log))
-            logger.info("학습 중 에러 발생 log를 확인하세요.")
-            # TODO 에러 발생 시 status, 해당 config를 웹 서버에 전달 api2
-            # status => status, status_message
-            # 1. OOM => docker 쓰는 서버는 docker안에서 consumer 여러개 돌림
-            # 2. no output file => 추론 서버 용량 부족, 서버 다운
-            # NOTE 입력 데이터 오류
-            # TODO ply 전송 실패 예외 처리
-            # api 호출 코드
-        else:
-            logger.info(getErrorMessage(train_log))
-            logger.info("학습 완료입니다.")
-            # TODO status, status_message 웹 서버에 전달
+        # command -dc to config: str to dict
+        # command: (str) python nerfstudio/pipe.py -dc '{"id":6,"objectType":false,"model":"nerfacto","src":"1708417256111.mov"}'
+        # config: (dict) {"id":6,"objectType":false,"model":"nerfacto","src":"1708417256111.mov"}
+        config = json.loads(command.split(' \'')[1][:-1])
+
+        print(id(config))
+        if id(config) == 201: # 웹 서버와 정상 통신
+            # train_log = train(command)
+            train_log = handle_setup(command)
+            
+            if train_log.returncode != SUCCESS_CODE:
+                logger.error(getErrorMessage(train_log))
+                logger.info("학습 중 에러 발생 log를 확인하세요.")
+                status("error", getErrorMessage(train_log), config["id"])
+            else:
+                logger.info(getErrorMessage(train_log))
+                logger.info("학습 완료입니다.")
+                status("success", "학습이 완료되었습니다.", config["id"])
 
 
 def train_furniture_process() -> None:
