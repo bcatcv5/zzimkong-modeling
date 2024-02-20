@@ -7,7 +7,7 @@ def train(command) -> sp.CompletedProcess[str]:
 
 
 def handle_setup(command) -> sp.CompletedProcess[str]:
-    process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE, shell=True, universal_newlines=True)
+    process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
 
     while True:
         output = process.stdout.readline().decode()

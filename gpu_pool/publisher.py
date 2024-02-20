@@ -11,13 +11,36 @@ logger = get_logger("train")
 
 def run_queue() -> None:
     """메세지 큐에 메세지 삽입"""
-
     config = {
         "id": 5,
         "objectType": False,
         "model": "nerfacto",
-        "src": "https://zzimkong.ggm.kr/1708084929582.mp4"
+        "src": "1708417103631.mov"
     }
+    # config = {
+    #     "id": 5,
+    #     "objectType": False,
+    #     "model": "nerfacto",
+    #     "src": "https://zzimkong.ggm.kr/1708084929582.mp4"
+    # }
+    # config = {
+    #     "id": 6,
+    #     "objectType": False,
+    #     "model": "nerfacto",
+    #     "src": "https://zzimkong.ggm.kr/1708312417066.mov"
+    # }
+    # config = {
+    #     "id": 7,
+    #     "objectType": False,
+    #     "model": "nerfacto",
+    #     "src": "https://zzimkong.ggm.kr/1708316269718.mov"
+    # }
+    # config = {
+    #     "id": 8,
+    #     "objectType": False,
+    #     "model": "nerfacto",
+    #     "src": "https://zzimkong.ggm.kr/1708322292149.mp4"
+    # }
 
     threading.Thread(target=sender, args=(config, )).start()
 
