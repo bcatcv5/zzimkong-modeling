@@ -7,10 +7,10 @@ def train(command) -> sp.CompletedProcess[str]:
 
 
 def handle_setup(command) -> sp.CompletedProcess[str]:
-    process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
+    process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE, shell=True, universal_newlines=True)
 
     while True:
-        output = process.stdout.readline().decode()
+        output = process.stdout.readline()
 
         if output == "" and process.poll() is not None:
             return process
