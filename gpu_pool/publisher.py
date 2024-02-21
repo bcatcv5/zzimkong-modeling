@@ -12,10 +12,10 @@ logger = get_logger("train")
 def run_queue() -> None:
     """메세지 큐에 메세지 삽입"""
     config = {
-        "id": 5,
+        "id": 1,
         "objectType": False,
         "model": "nerfacto",
-        "src": "1708417103631.mov"
+        "src": "1708427430129.mov"
     }
     # config = {
     #     "id": 5,

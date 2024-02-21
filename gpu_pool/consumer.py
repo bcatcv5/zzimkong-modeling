@@ -77,11 +77,10 @@ def train_space_process() -> None:
             if train_log.returncode != SUCCESS_CODE:
                 logger.error(getErrorMessage(train_log))
                 logger.info("학습 중 에러 발생 log를 확인하세요.")
-                status("error", getErrorMessage(train_log), config["id"])
             else:
                 logger.info(getErrorMessage(train_log))
                 logger.info("학습 완료입니다.")
-                status("success", "학습이 완료되었습니다.", config["id"])
+                status("success", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
 
 
 def train_furniture_process() -> None:
