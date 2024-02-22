@@ -1,0 +1,6 @@
+transformers
+omegaconf
+pillow
+imageio[ffmpeg]
+PyMCubes
+trimesh
