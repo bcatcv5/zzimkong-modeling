@@ -28,7 +28,8 @@ def handle_receive_process() -> None:
 
 def id(config):
     url = "https://zzimkong.ggm.kr/inference/recived"
-    data = {"id": config["id"]}
+    data = {"id": config["id"],
+            "server": env.SERVER_IP}
     r = requests.post(url, data=data, verify=False)
     return r.status_code
 
