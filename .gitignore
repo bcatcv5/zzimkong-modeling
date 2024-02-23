@@ -162,8 +162,5 @@ cython_debug/
 # only for test
 gpu_pool/publisher.py
 
-# server setting
-gpu_pool/env.py
-
 # log files
 gpu_pool/nohup.out
