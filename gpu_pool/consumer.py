@@ -30,14 +30,16 @@ def id(config):
     url = "https://zzimkong.ggm.kr/inference/recived"
     data = {"id": config["id"],
             "server": env.SERVER_IP}
-    r = requests.post(url, data=data, verify=False)
+    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE3MDkwMTE5NDIsImV4cCI6MTcxNzY1MTk0Mn0.GDqzeLFwWziLvFzRPNJ0AsJiy4l2UwzAy74Cg27wY5A"}
+    r = requests.post(url, headers=headers, data=data, verify=False)
     return r.status_code
 
 
 def status(status, message, id):
     url = "https://zzimkong.ggm.kr/inference/status"
     data = {"status": status, "statusMessage": message, "id": id}
-    r = requests.post(url, data=data, verify=False)
+    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE3MDkwMTE5NDIsImV4cCI6MTcxNzY1MTk0Mn0.GDqzeLFwWziLvFzRPNJ0AsJiy4l2UwzAy74Cg27wY5A"}
+    r = requests.post(url, headers=headers, data=data, verify=False)
 
 
 def select_process(): # NOTE: 서버마다 담당한 프로세스만 수행 (이외는 주석 처리할 것)
