@@ -8,6 +8,8 @@ import git
 import sys
 import requests
 import json
+from mysql.connector import Error
+import mysql
 
 SLEEP_TIME: Final = 0.5
 CONFIG_INDEX: Final = 1
@@ -35,11 +37,38 @@ def id(config):
     return r.status_code
 
 
-def status(status, message, id):
-    url = "https://zzimkong.ggm.kr/inference/status"
-    data = {"status": status, "statusMessage": message, "id": id}
-    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE3MDkwMTE5NDIsImV4cCI6MTcxNzY1MTk0Mn0.GDqzeLFwWziLvFzRPNJ0AsJiy4l2UwzAy74Cg27wY5A"}
-    r = requests.post(url, headers=headers, data=data, verify=False)
+def changeStatus(status, message, id, store_file_url = None, thumbnail_file_url = None):
+    connection = None
+    
+    try:
+        connection = mysql.connector.connect(
+            host='34.64.235.32',
+            database='ZZIMKONG',
+            user='root',
+            password='NewSt@rt!70'
+        )
+
+        if connection.is_connected():
+            if(store_file_url == None and thumbnail_file_url == None):
+                insert_query = f"UPDATE space_model_result SET status_code = '{status}', status_message = '{message}' WHERE message_id = {id};"
+            elif(store_file_url != None):
+                insert_query = f"UPDATE space_model_result SET status_code = '{status}', status_message = '{message}', store_file_url = '{store_file_url}' WHERE message_id = {id};"
+            elif(thumbnail_file_url != None):
+                insert_query = f"UPDATE space_model_result SET thumbnail_file_url = '{thumbnail_file_url}' WHERE message_id = {id};"
+                
+            cursor = connection.cursor()
+            cursor.execute(insert_query)
+            connection.commit()
+            print("space_model_result 테이블에 메시지를 입력하였습니다.")
+
+    except Error as e:
+        print("MySQL에 연결되지 않았습니다.", e)
+
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL 연결을 끊었습니다.")
 
 
 def select_process(): # NOTE: 서버마다 담당한 프로세스만 수행 (이외는 주석 처리할 것)
@@ -67,9 +96,6 @@ def train_space_process() -> None:
         logger.info("학습 중 입니다.")
         # git_synchronize()
 
-        # command -dc to config: str to dict
-        # command: (str) python nerfstudio/pipe.py -dc '{"id":6,"objectType":false,"model":"nerfacto","src":"1708417256111.mov"}'
-        # config: (dict) {"id":6,"objectType":false,"model":"nerfacto","src":"1708417256111.mov"}
         config = json.loads(command.split(' \'')[1][:-1])
 
         print(id(config))
@@ -83,7 +109,7 @@ def train_space_process() -> None:
             else:
                 logger.info(getErrorMessage(train_log))
                 logger.info("학습 완료입니다.")
-                status("success", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
+                changeStatus("success", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
 
 
 def train_furniture_process() -> None:
@@ -96,15 +122,17 @@ def train_furniture_process() -> None:
         logger.info("학습 중 입니다.")
         # git_synchronize()
 
-        # train_log = train(command)
-        train_log = handle_setup(command)
-        
-        if train_log.stderr:
-            logger.info("학습 중 에러 발생 log를 확인하세요.")
-            logger.error(train_log.stderr)
-            logger.info(train_log.stdout)
-        else:
-            logger.info("학습 완료입니다.")
+        print(id(config))
+        if id(config) == 201: # 웹 서버와 정상 통신
+            train_log = handle_setup(command)
+            
+            if train_log.returncode != SUCCESS_CODE:
+                logger.error(getErrorMessage(train_log))
+                logger.info("학습 중 에러 발생 log를 확인하세요.")
+            else:
+                logger.info(getErrorMessage(train_log))
+                logger.info("학습 완료입니다.")
+                changeStatus("success", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
 
 
 def git_synchronize():
