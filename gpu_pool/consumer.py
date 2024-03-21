@@ -109,7 +109,7 @@ def train_space_process() -> None:
             else:
                 logger.info(getErrorMessage(train_log))
                 logger.info("학습 완료입니다.")
-                changeStatus("success", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
+                changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
 
 
 def train_furniture_process() -> None:
@@ -132,7 +132,7 @@ def train_furniture_process() -> None:
             else:
                 logger.info(getErrorMessage(train_log))
                 logger.info("학습 완료입니다.")
-                changeStatus("success", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
+                changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
 
 
 def git_synchronize():
