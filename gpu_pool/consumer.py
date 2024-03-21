@@ -42,7 +42,7 @@ def changeStatus(status, message, id, store_file_url = None, thumbnail_file_url 
     
     try:
         connection = mysql.connector.connect(
-            host='34.64.235.32',
+            host='34.64.80.157',
             database='ZZIMKONG',
             user='root',
             password='NewSt@rt!70'
