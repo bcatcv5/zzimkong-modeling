@@ -10,6 +10,7 @@ import requests
 import json
 from mysql.connector import Error
 import mysql
+from datetime import datetime
 
 SLEEP_TIME: Final = 0.5
 CONFIG_INDEX: Final = 1
@@ -37,7 +38,7 @@ def id(config):
     return r.status_code
 
 
-def changeStatus(status, message, id, store_file_url = None, thumbnail_file_url = None):
+def changeStatus(status, message, id, store_file_url = None, thumbnail_file_url = None, infer_start_time = None, infer_end_time = None):
     connection = None
     
     try:
@@ -55,6 +56,10 @@ def changeStatus(status, message, id, store_file_url = None, thumbnail_file_url 
                 insert_query = f"UPDATE space_model_result SET status_code = '{status}', status_message = '{message}', store_file_url = '{store_file_url}' WHERE message_id = {id};"
             elif(thumbnail_file_url != None):
                 insert_query = f"UPDATE space_model_result SET thumbnail_file_url = '{thumbnail_file_url}' WHERE message_id = {id};"
+            elif(infer_start_time != None):
+                insert_query = f"UPDATE space_model_result SET learned_date = '{infer_start_time}' WHERE message_id = {id};"
+            elif(infer_end_time != None):
+                insert_query = f"UPDATE space_model_result SET finished_date = '{infer_end_time}' WHERE message_id = {id};"
                 
             cursor = connection.cursor()
             cursor.execute(insert_query)
@@ -80,8 +85,6 @@ def select_process(): # NOTE: 서버마다 담당한 프로세스만 수행 (이
     # for 4090 server
     # train_furniture_process()
 
-    # else: # NOTE 이외의 경우 예외 처리 어떻게 할지 (aistage 사용 시 문제가 될 수 있음)
-
 
 def getErrorMessage(log):
     return log.stderr.read()
@@ -105,11 +108,11 @@ def train_space_process() -> None:
             
             if train_log.returncode != SUCCESS_CODE:
                 logger.error(getErrorMessage(train_log))
-                logger.info("학습 중 에러 발생 log를 확인하세요.")
+                logger.info("학습 중 에러 발생 log를 확인하세요.", config["id"], infer_end_time=str(datetime.now()))
             else:
                 logger.info(getErrorMessage(train_log))
                 logger.info("학습 완료입니다.")
-                changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
+                changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"], infer_end_time=str(datetime.now()))
 
 
 def train_furniture_process() -> None:
