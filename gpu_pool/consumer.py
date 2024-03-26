@@ -151,7 +151,7 @@ def train_furniture_process() -> None:
         
         if train_log.returncode != SUCCESS_CODE:
             logger.error(getErrorMessage(train_log))
-            logger.info("학습 중 에러 발생 log를 확인하세요.", config["id"], infer_end_time=str(datetime.now()))
+            logger.info("학습 중 에러 발생 log를 확인하세요.")
         else:
             logger.info(getErrorMessage(train_log))
             logger.info("학습 완료입니다.")
