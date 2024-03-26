@@ -29,13 +29,13 @@ def handle_receive_process() -> None:
         select_process()
         sleep(SLEEP_TIME)
 
-def id(config):
-    url = "https://zzimkong.ggm.kr/inference/recived"
-    data = {"id": config["id"],
-            "server": env.SERVER_IP}
-    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE3MDkwMTE5NDIsImV4cCI6MTcxNzY1MTk0Mn0.GDqzeLFwWziLvFzRPNJ0AsJiy4l2UwzAy74Cg27wY5A"}
-    r = requests.post(url, headers=headers, data=data, verify=False)
-    return r.status_code
+# def id(config):
+#     url = "https://zzimkong.ggm.kr/inference/recived"
+#     data = {"id": config["id"],
+#             "server": env.SERVER_IP}
+#     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE3MDkwMTE5NDIsImV4cCI6MTcxNzY1MTk0Mn0.GDqzeLFwWziLvFzRPNJ0AsJiy4l2UwzAy74Cg27wY5A"}
+#     r = requests.post(url, headers=headers, data=data, verify=False)
+#     return r.status_code
 
 
 def changeStatus(status, message, id, store_file_url = None, thumbnail_file_url = None, infer_start_time = None, infer_end_time = None):
@@ -101,18 +101,28 @@ def train_space_process() -> None:
 
         config = json.loads(command.split(' \'')[1][:-1])
 
-        print(id(config))
-        if id(config) == 201: # 웹 서버와 정상 통신
-            # train_log = train(command)
-            train_log = handle_setup(command)
+        # print(id(config))
+        # if id(config) == 201: # 웹 서버와 정상 통신
+        #     # train_log = train(command)
+        #     train_log = handle_setup(command)
             
-            if train_log.returncode != SUCCESS_CODE:
-                logger.error(getErrorMessage(train_log))
-                logger.info("학습 중 에러 발생 log를 확인하세요.", config["id"], infer_end_time=str(datetime.now()))
-            else:
-                logger.info(getErrorMessage(train_log))
-                logger.info("학습 완료입니다.")
-                changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"], infer_end_time=str(datetime.now()))
+        #     if train_log.returncode != SUCCESS_CODE:
+        #         logger.error(getErrorMessage(train_log))
+        #         logger.info("학습 중 에러 발생 log를 확인하세요.", config["id"], infer_end_time=str(datetime.now()))
+        #     else:
+        #         logger.info(getErrorMessage(train_log))
+        #         logger.info("학습 완료입니다.")
+        #         changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"], infer_end_time=str(datetime.now()))
+        train_log = handle_setup(command)
+        
+        if train_log.returncode != SUCCESS_CODE:
+            logger.error(getErrorMessage(train_log))
+            logger.info("학습 중 에러 발생 log를 확인하세요.", config["id"], infer_end_time=str(datetime.now()))
+        else:
+            logger.info(getErrorMessage(train_log))
+            logger.info("학습 완료입니다.")
+            changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"], infer_end_time=str(datetime.now()))
+
 
 
 def train_furniture_process() -> None:
@@ -125,17 +135,27 @@ def train_furniture_process() -> None:
         logger.info("학습 중 입니다.")
         # git_synchronize()
 
-        print(id(config))
-        if id(config) == 201: # 웹 서버와 정상 통신
-            train_log = handle_setup(command)
+        # print(id(config))
+        # if id(config) == 201: # 웹 서버와 정상 통신
+        #     # train_log = train(command)
+        #     train_log = handle_setup(command)
             
-            if train_log.returncode != SUCCESS_CODE:
-                logger.error(getErrorMessage(train_log))
-                logger.info("학습 중 에러 발생 log를 확인하세요.")
-            else:
-                logger.info(getErrorMessage(train_log))
-                logger.info("학습 완료입니다.")
-                changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"])
+        #     if train_log.returncode != SUCCESS_CODE:
+        #         logger.error(getErrorMessage(train_log))
+        #         logger.info("학습 중 에러 발생 log를 확인하세요.", config["id"], infer_end_time=str(datetime.now()))
+        #     else:
+        #         logger.info(getErrorMessage(train_log))
+        #         logger.info("학습 완료입니다.")
+        #         changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"], infer_end_time=str(datetime.now()))
+        train_log = handle_setup(command)
+        
+        if train_log.returncode != SUCCESS_CODE:
+            logger.error(getErrorMessage(train_log))
+            logger.info("학습 중 에러 발생 log를 확인하세요.", config["id"], infer_end_time=str(datetime.now()))
+        else:
+            logger.info(getErrorMessage(train_log))
+            logger.info("학습 완료입니다.")
+            changeStatus("FINISH", "기다려주셔서 감사합니다. 재구성 결과를 확인해보세요 :)", config["id"], infer_end_time=str(datetime.now()))
 
 
 def git_synchronize():
